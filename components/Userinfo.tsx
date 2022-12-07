@@ -1,5 +1,5 @@
 import React from 'react'
-import { UserInfo } from '@firebase/auth'
+import { UserInfo } from 'firebase/auth'
 
 export default function Userinfo({ user }: { user: UserInfo }) {
     return (
