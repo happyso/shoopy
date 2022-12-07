@@ -6,17 +6,8 @@ import { useUser } from '../hooks/useUser'
 import { useAuth } from '../hooks/useAuth'
 
 export default function Navbar() {
-    // const [user, setUser] = useState<IUser | null>()
-
-    // useEffect(() => {
-    //     onUserStateChange((user) => {
-    //         console.log(user)
-
-    //         setUser(user)
-    //     })
-    // }, [])
-
     const { user } = useUser()
+
     const { login, logout } = useAuth()
 
     return (

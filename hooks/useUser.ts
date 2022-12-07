@@ -21,6 +21,7 @@ async function getUser(): Promise<IUser | null> {
         onAuthStateChanged(auth, async (user) => {
             const updatedUser = user ? await adminUser(user) : null
             resolve(updatedUser)
+            return updatedUser
         })
     })
 }
@@ -28,7 +29,7 @@ async function getUser(): Promise<IUser | null> {
 export function useUser(): UseUser {
     const queryClient = useQueryClient()
 
-    const { data: user } = useQuery([queryKeys.user], () => getUser())
+    const { data: user } = useQuery([queryKeys.user], getUser)
 
     function updateUser(newUser: User): void {
         queryClient.setQueryData([queryKeys.user], newUser)
