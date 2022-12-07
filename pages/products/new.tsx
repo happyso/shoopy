@@ -10,6 +10,6 @@ export default function New() {
         if (!user) {
             router.push('/')
         }
-    }, [user])
+    }, [router, user])
     return <div>New!!</div>
 }

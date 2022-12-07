@@ -17,11 +17,10 @@ interface IUser extends User {
 }
 
 async function getUser(): Promise<IUser | null> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         onAuthStateChanged(auth, async (user) => {
             const updatedUser = user ? await adminUser(user) : null
             resolve(updatedUser)
-            return updatedUser
         })
     })
 }
