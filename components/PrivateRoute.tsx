@@ -14,11 +14,9 @@ export default function PrivateRoute({ children }: { children: ReactElement }) {
 
     useEffect(() => {
         if (!user && pathIsUserProtected) {
-            // Redirect route, you can point this to /login
             router.push('/')
         }
         if (!user?.isAdmin && pathIsAdminProtected) {
-            // Redirect route, you can point this to /login
             router.push('/')
         }
     }, [user, router, pathIsUserProtected, pathIsAdminProtected])
