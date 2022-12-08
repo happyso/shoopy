@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { ref, set, get } from 'firebase/database'
 import { database } from '../pages/api/firebase'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 type IProduct = {
     title: string
     price: string
@@ -27,4 +28,21 @@ export async function getProducts() {
         }
         return []
     })
+}
+
+export function useProducts() {
+    const queryClient = useQueryClient()
+
+    const productsQuery = useQuery(['products'], getProducts, {
+        staleTime: 1000 * 60,
+    })
+
+    const addProduct = useMutation(
+        ({ product, url }: { product: IProduct; url: string }) =>
+            addNewProduct(product, url),
+        {
+            onSuccess: () => queryClient.invalidateQueries(['products']),
+        }
+    )
+    return { productsQuery, addProduct }
 }
