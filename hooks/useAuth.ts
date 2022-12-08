@@ -4,10 +4,8 @@ import {
     signInWithPopup,
     GoogleAuthProvider,
     signOut,
-    onAuthStateChanged,
-    User,
 } from 'firebase/auth'
-import { getDatabase, ref, child, get } from 'firebase/database'
+import { getDatabase, ref, get } from 'firebase/database'
 import { useUser } from './useUser'
 
 const firebaseConfig = {
@@ -55,4 +53,19 @@ export function useAuth() {
         login,
         logout,
     }
+}
+export async function adminUser(user: any) {
+    return get(ref(database, `admins`))
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const admins = snapshot.val()
+                const isAdmin = admins.includes(user.uid)
+                return { ...user, isAdmin }
+            } else {
+                return user
+            }
+        })
+        .catch((error) => {
+            console.error(error)
+        })
 }

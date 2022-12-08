@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { User, onAuthStateChanged } from 'firebase/auth'
-import { adminUser, auth } from '../pages/api/firebase'
+import { adminUser, auth } from './useAuth'
 
 export const queryKeys = {
     user: 'user',
