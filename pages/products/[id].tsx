@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useState, ChangeEvent } from 'react'
 import Button from '../../components/Button'
 import { useProducts } from '../../hooks/useProducts'
 type IProduct = {
@@ -8,25 +8,28 @@ type IProduct = {
     category: string
     image: string
     description: string
-    options: string
+    options: { [key: number]: string | string[] }
 }
 
 interface TypeProduct {
-    isLoading: any
-    error: any
-    data: any
+    isLoading: boolean
+    isError: boolean
+    data: IProduct | undefined
 }
 export default function Detail() {
     const router = useRouter()
     const { id } = router.query
     const { productQuery } = useProducts(id as string)
-
-    const { isLoading, error, data: product }: TypeProduct = productQuery
-
+    const { isLoading, isError, data: product }: TypeProduct = productQuery
+    const [selected, setSelected] = useState(
+        product?.options && Object.values(product.options)[0]
+    )
+    const handleSelect = (e: ChangeEvent<HTMLSelectElement>) =>
+        setSelected(e.target.value)
     return (
         <>
             {isLoading && <p>Loading...</p>}
-            {error && <p>error</p>}
+            {isError && <p>error</p>}
             {product && (
                 <section className="flex flex-col md:flex-row p-4">
                     <img
@@ -49,6 +52,21 @@ export default function Detail() {
                             >
                                 옵션:
                             </label>
+                            <select
+                                id="select"
+                                className="p-2 m-4 flex-1 border-2 border-dashed border-brand outline-none"
+                                onChange={handleSelect}
+                                value={selected}
+                            >
+                                {product.options &&
+                                    Object.values(product.options).map(
+                                        (option, index) => (
+                                            <option key={index}>
+                                                {option}
+                                            </option>
+                                        )
+                                    )}
+                            </select>
                         </div>
 
                         <Button text="장바구니에 추가" />
