@@ -30,12 +30,29 @@ export async function getProducts() {
     })
 }
 
-export function useProducts() {
+export async function getProduct(id: string) {
+    return get(ref(database, 'products/' + id)).then((snapshot) => {
+        if (snapshot.exists()) {
+            return snapshot.val()
+        }
+        return {}
+    })
+}
+
+export function useProducts(id?: string) {
     const queryClient = useQueryClient()
 
     const productsQuery = useQuery(['products'], getProducts, {
         staleTime: 1000 * 60,
     })
+
+    const productQuery = useQuery(
+        ['products', id],
+        () => getProduct(id as string),
+        {
+            staleTime: 1000 * 60,
+        }
+    )
 
     const addProduct = useMutation(
         ({ product, url }: { product: IProduct; url: string }) =>
@@ -44,5 +61,5 @@ export function useProducts() {
             onSuccess: () => queryClient.invalidateQueries(['products']),
         }
     )
-    return { productsQuery, addProduct }
+    return { productsQuery, addProduct, productQuery }
 }

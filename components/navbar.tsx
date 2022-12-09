@@ -24,9 +24,9 @@ export default function Navbar() {
                             New
                         </Link>
                     )}
+                    {user && <Userinfo user={user} />}
                     {user && <button onClick={logout}>Logout</button>}
                     {!user && <button onClick={login}>Login</button>}
-                    {user && <Userinfo user={user} />}
                 </>
             </nav>
         </header>
