@@ -15,7 +15,7 @@ interface TypeProduct {
     product: IProduct | undefined
 }
 
-export async function getCart(userId: string) {
+export async function getCart(userId: string | undefined) {
     return get(ref(database, `carts/${userId}`)) //
         .then((snapshot) => {
             const items = snapshot.val() || {}

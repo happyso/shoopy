@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Userinfo from './Userinfo'
 import { useUser } from '../hooks/useUser'
 import { useAuth } from '../hooks/useAuth'
+import CartStatus from './CartStatus'
 
 export default function Navbar() {
     const { user } = useUser()
@@ -18,7 +19,10 @@ export default function Navbar() {
             <nav className="flex items-center gap-4 font-semibold">
                 <>
                     <Link href="/products">Products</Link>
-                    <Link href="/carts">Carts</Link>
+                    <Link href="/carts">
+                        Carts
+                        <CartStatus />
+                    </Link>
                     {user && user.isAdmin && (
                         <Link href="/products/new" className="text-2xl">
                             New
