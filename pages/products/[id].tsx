@@ -1,8 +1,11 @@
 import { useRouter } from 'next/router'
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState, ChangeEvent, MouseEvent } from 'react'
 import Button from '../../components/Button'
+import { addOrUpdateCart } from '../../hooks/useCarts'
 import { useProducts } from '../../hooks/useProducts'
+import { useUser } from '../../hooks/useUser'
 type IProduct = {
+    id: string
     title: string
     price: string
     category: string
@@ -11,27 +14,59 @@ type IProduct = {
     options: { [key: number]: string | string[] }
 }
 
+type ICart = {
+    id: string
+    title: string
+    price: string
+    category: string
+    image: string
+    description: string
+    option: string
+    quantity: number
+}
 interface TypeProduct {
     isLoading: boolean
     isError: boolean
     data: IProduct | undefined
 }
 export default function Detail() {
+    const { user } = useUser()
     const router = useRouter()
     const { id } = router.query
     const { productQuery } = useProducts(id as string)
     const { isLoading, isError, data: product }: TypeProduct = productQuery
+
     const [selected, setSelected] = useState(
         product?.options && Object.values(product.options)[0]
     )
     const handleSelect = (e: ChangeEvent<HTMLSelectElement>) =>
         setSelected(e.target.value)
+
+    const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+        console.log(e)
+
+        const result = {
+            id: product?.id,
+            image: product?.image,
+            title: product?.title,
+            price: product?.price,
+            option: selected,
+            quantity: 1,
+        }
+
+        if (user && user.uid) {
+            addOrUpdateCart(user.uid, result).then((result) =>
+                console.log(result)
+            )
+        }
+    }
     return (
         <>
             {isLoading && <p>Loading...</p>}
             {isError && <p>error</p>}
             {product && (
                 <section className="flex flex-col md:flex-row p-4">
+                    <p>{product.category}</p>
                     <img
                         className="w-full px-4 basis-7/12"
                         src={product.image}
@@ -69,7 +104,7 @@ export default function Detail() {
                             </select>
                         </div>
 
-                        <Button text="장바구니에 추가" />
+                        <Button text="장바구니에 추가" onClick={handleClick} />
                     </div>
                 </section>
             )}

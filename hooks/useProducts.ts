@@ -3,6 +3,7 @@ import { ref, set, get } from 'firebase/database'
 import { database } from '../pages/api/firebase'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 type IProduct = {
+    id: string
     title: string
     price: string
     category: string
