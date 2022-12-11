@@ -23,30 +23,33 @@ export async function getCart(userId: string | undefined) {
         })
 }
 
-export async function addOrUpdateCart(
-    userId: string,
-    product: IProduct | undefined
-) {
-    return set(ref(database, `carts/${userId}/${product?.id}`), product)
+export async function addOrUpdateCart(userId: string, product: any) {
+    console.log(product)
+
+    return set(ref(database, `carts/${userId}/${product.id}`), product)
 }
 
 export async function removeFromCart(userId: string, productId: string) {
     return remove(ref(database, `carts/${userId}/${productId}`))
 }
 
-// export function useCart() {
-//     const queryClient = useQueryClient()
+export function useCart(userId: any) {
+    const queryClient = useQueryClient()
 
-//     const productsQuery = useQuery(['products'], getCart, {
-//         staleTime: 1000 * 60,
-//     })
+    const cartQuery = useQuery(['carts', userId || ''], () => getCart(userId), {
+        enabled: !!userId,
+        staleTime: 1000 * 60,
+    })
 
-//     const addProduct = useMutation(
-//         ({ product, url }: { product: IProduct; url: string }) =>
-//             addCart(product, url),
-//         {
-//             onSuccess: () => queryClient.invalidateQueries(['products']),
-//         }
-//     )
-//     return { productsQuery, addProduct, productQuery }
-// }
+    const addOrUpdateItem = useMutation(
+        (product) => addOrUpdateCart(userId, product),
+        {
+            onSuccess: () => queryClient.invalidateQueries(['carts', userId]),
+        }
+    )
+
+    const removeItem = useMutation((id: string) => removeFromCart(userId, id), {
+        onSuccess: () => queryClient.invalidateQueries(['carts', userId]),
+    })
+    return { cartQuery, addOrUpdateItem, removeItem }
+}

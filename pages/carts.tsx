@@ -3,15 +3,16 @@ import React from 'react'
 import Button from '../components/Button'
 import CartItem from '../components/CartItem'
 import PriceCard from '../components/PriceCard'
-import { getCart } from '../hooks/useCarts'
+import { getCart, useCart } from '../hooks/useCarts'
 import { useUser } from '../hooks/useUser'
 const SHIPPING = 3000
 export default function CartStatus() {
     const { user } = useUser()
     const uid = user ? user.uid : undefined
-    const { isLoading, data: products } = useQuery(['carts', uid], () =>
-        getCart(uid)
-    )
+
+    const {
+        cartQuery: { isLoading, data: products },
+    } = useCart(uid)
 
     if (isLoading) return <p>Loading...</p>
     const hasProducts = products && products.length > 0

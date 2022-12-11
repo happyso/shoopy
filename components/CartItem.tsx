@@ -1,19 +1,24 @@
 import React from 'react'
-import { addOrUpdateCart, removeFromCart } from '../hooks/useCarts'
+import { useCart } from '../hooks/useCarts'
 
 export default function CartItem({
     product,
     product: { id, image, title, option, quantity, price },
     uid,
+}: {
+    product: any
+    uid: string
 }) {
+    const { addOrUpdateItem, removeItem } = useCart(uid)
     const handleMinus = () => {
         if (quantity < 2) return
-        addOrUpdateCart(uid, { ...product, quantity: quantity - 1 })
+        addOrUpdateItem.mutate({ ...product, quantity: quantity - 1 })
     }
-    const handlePlus = () =>
-        addOrUpdateCart(uid, { ...product, quantity: quantity + 1 })
+    const handlePlus = () => {
+        addOrUpdateItem.mutate({ ...product, quantity: quantity + 1 })
+    }
 
-    const handleDelete = () => removeFromCart(uid, id)
+    const handleDelete = () => removeItem.mutate(id)
     return (
         <li className="flex justify-between my-2 items-center">
             <img className="w-24 md:w-48 rounded-lg" src={image} alt={title} />

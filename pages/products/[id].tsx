@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router'
 import React, { useState, ChangeEvent, MouseEvent } from 'react'
 import Button from '../../components/Button'
-import { addOrUpdateCart } from '../../hooks/useCarts'
-import { useProducts } from '../../hooks/useProducts'
+import { addOrUpdateCart, useCart } from '../../hooks/useCarts'
+import { addNewProduct, useProducts } from '../../hooks/useProducts'
 import { useUser } from '../../hooks/useUser'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 type IProduct = {
     id: string
     title: string
@@ -35,7 +36,8 @@ export default function Detail() {
     const { id } = router.query
     const { productQuery } = useProducts(id as string)
     const { isLoading, isError, data: product }: TypeProduct = productQuery
-
+    const { addOrUpdateItem } = useCart(user?.uid)
+    const [success, setSuccess] = useState<string | null>('')
     const [selected, setSelected] = useState(
         product?.options && Object.values(product.options)[0]
     )
@@ -43,8 +45,6 @@ export default function Detail() {
         setSelected(e.target.value)
 
     const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-        console.log(e)
-
         const result = {
             id: product?.id,
             image: product?.image,
@@ -55,8 +55,17 @@ export default function Detail() {
         }
 
         if (user && user.uid) {
-            addOrUpdateCart(user.uid, result).then((result) =>
-                console.log(result)
+            const uid = user.uid
+            addOrUpdateItem.mutate(
+                { userId: uid, product },
+                {
+                    onSuccess: () => {
+                        setSuccess('카트에 추가됨.')
+                        setTimeout(() => {
+                            setSuccess(null)
+                        }, 4000)
+                    },
+                }
             )
         }
     }
@@ -66,6 +75,7 @@ export default function Detail() {
             {isError && <p>error</p>}
             {product && (
                 <section className="flex flex-col md:flex-row p-4">
+                    {success && <p className="my-2">✅ {success}</p>}
                     <p>{product.category}</p>
                     <img
                         className="w-full px-4 basis-7/12"

@@ -1,9 +1,11 @@
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 import Button from '../../components/Button'
-import { addNewProduct } from '../../hooks/useProducts'
+import { useProducts } from '../../hooks/useProducts'
 import { uploadImage } from '../api/uploader'
+import Image from 'next/image'
 
 type IProduct = {
+    id: string
     title: string
     price: string
     category: string
@@ -13,12 +15,15 @@ type IProduct = {
 
 export default function New() {
     const [product, setProduct] = useState<IProduct>({
+        id: '',
         title: '',
         price: '',
         category: '',
         description: '',
         options: '',
     })
+
+    const { addProduct } = useProducts()
     const [file, setFile] = useState<File | null>()
     const [isUploading, setIsUploading] = useState(false)
     const [success, setSuccess] = useState<string | null>('')
@@ -27,12 +32,17 @@ export default function New() {
         setIsUploading(true)
         uploadImage(file)
             .then((url) => {
-                addNewProduct(product, url).then(() => {
-                    setSuccess('성공적으로 제품이 추가되었습니다.')
-                    setTimeout(() => {
-                        setSuccess(null)
-                    }, 4000)
-                })
+                addProduct.mutate(
+                    { product, url },
+                    {
+                        onSuccess: () => {
+                            setSuccess('성공적으로 제품이 추가되었습니다.')
+                            setTimeout(() => {
+                                setSuccess(null)
+                            }, 4000)
+                        },
+                    }
+                )
             })
             .finally(() => setIsUploading(false))
     }
@@ -49,7 +59,14 @@ export default function New() {
         <section className="w-full text-center">
             <h2>새로운 상품 등록</h2>
             {success && <p className="my-2">✅ {success}</p>}
-            {file && <img src={URL.createObjectURL(file)} alt="local file" />}
+            {file && (
+                <Image
+                    src={URL.createObjectURL(file)}
+                    width={300}
+                    height={300}
+                    alt="local file"
+                />
+            )}
             <form className="flex flex-col px-12" onSubmit={handleSubmit}>
                 <input
                     type="file"
