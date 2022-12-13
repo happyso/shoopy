@@ -14,3 +14,10 @@ yarn dev
 
 -   type 정리
 -   css 코드 정리
+
+## 스펙
+
+-   typescript
+-   tailwind
+-   react-query
+-   nextjs
