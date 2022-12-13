@@ -35,7 +35,7 @@ export function useCart(userId: any) {
     const queryClient = useQueryClient()
 
     const cartQuery = useQuery(['carts', userId || ''], () => getCart(userId), {
-        enabled: !!userId,
+        enabled: !!userId, //userId가 있을때만 useQuery가 동작하게끔
         staleTime: 1000 * 60,
     })
 
