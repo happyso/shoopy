@@ -24,8 +24,6 @@ export async function getCart(userId: string | undefined) {
 }
 
 export async function addOrUpdateCart(userId: string, product: any) {
-    console.log(product)
-
     return set(ref(database, `carts/${userId}/${product.id}`), product)
 }
 
