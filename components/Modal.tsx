@@ -21,6 +21,11 @@ function Modal({
         }
     }, [handleClose])
 
+    const handleClickInnerModal = (e: MouseEvent<HTMLDivElement>) => {
+        // ModalWrapper로 이벤트 전파 방지
+        e.stopPropagation()
+    }
+
     return (
         <ReactPortal wrapperId="react-portal-modal-container">
             <CSSTransition
@@ -30,11 +35,16 @@ function Modal({
                 classNames="modal"
                 nodeRef={nodeRef}
             >
-                <div className="modal" ref={nodeRef}>
+                <div className="modal" ref={nodeRef} onClick={handleClose}>
                     <button onClick={handleClose} className="close-btn">
                         Close
                     </button>
-                    <div className="modal-content">{children}</div>
+                    <div
+                        className="modal-content"
+                        onClick={handleClickInnerModal}
+                    >
+                        {children}
+                    </div>
                 </div>
             </CSSTransition>
         </ReactPortal>
